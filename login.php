@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html>
 <?php
     $username = $password = "";
     if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -5,7 +7,7 @@
         $password = mysqli_escape_string(clean_input($_POST["pass"]));
     }
     
-    $link = mysqli_connect("localhost", "root", "", "OMTS");
+    $dbh = new PDO('mysql:host=localhost;dbname=OMTS', "root", "");
 
     function clean_input($data) {
         $data = trim($data);
@@ -14,3 +16,5 @@
         return($data);
     }
 ?>
+
+<html>
