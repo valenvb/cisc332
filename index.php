@@ -18,7 +18,7 @@
 
   <body>
 
-    <?php include 'parts/menu.php' ?>
+    <?php include 'parts/menu.php'; ?>
 
     <main role="main">
 

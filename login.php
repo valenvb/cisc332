@@ -33,21 +33,34 @@
     <!-- Custom styles for this template -->
     <link href="css/signin.css" rel="stylesheet">
   </head>
+  <body>
+    <?php include 'parts/menu.php'; ?>
 
-  <body class="text-center">
-    <form class="form-signin">
-      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-      <label for="inputEmail" class="sr-only">Email address</label>
-      <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-      <label for="inputPassword" class="sr-only">Password</label>
-      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-      <div class="checkbox mb-3">
-        <label>
-          <input type="checkbox" value="remember-me"> Remember me
-        </label>
+    <main role="main">
+      <div class="">
+        <form class="text-center bg-dark form-signin text-light" action="login.php" method="POST">
+          <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+          <label for="inputuserName" class="sr-only">Username</label>
+          <input name="username" type="text" id="inputUsername" class="form-control" placeholder="Username" required     autofocus>
+          <label for="inputPassword" class="sr-only">Password</label>
+          <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password"     required>
+          <div class="checkbox mb-3">
+            <label>
+              <input type="checkbox" value="remember-me"> Remember me
+            </label>
+          </div>
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+          <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
+        </form>
       </div>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-      <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
-    </form>
+    </main>
+
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/holder.min.js"></script>
   </body>
 </html>
