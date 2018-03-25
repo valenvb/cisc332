@@ -15,8 +15,15 @@ if (session_status() == PHP_SESSION_NONE) {
                 <div class="col-sm-4 offset-md-1 py-4">
                     <ul class="list-unstyled">
                         <li>
+                        <?php
+                        if(!(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"])){
+                            ?>
                             <a href="login.php" class="text-dark">Log in</a>
-                            
+                            <?php
+                        } else {
+                            echo("<a>User: ".$_SESSION['username']."</a>");
+                        }
+                        ?>
                         </li>
                         <li>
                             <?php
