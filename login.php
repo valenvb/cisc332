@@ -1,41 +1,58 @@
 <?php
     session_start();
-    $username = $password = "";
-    if($_SERVER["REQUEST_METHOD"] == "POST"){
-        $username = mysqli_escape_string(clean_input($_POST["username"]));
-        $password = mysqli_escape_string(clean_input($_POST["pass"]));
-    }
-    
-    $dbh = new PDO('mysql:host=localhost;dbname=OMTS', "root", "");
+    //$past = $_SERVER["HTTP_REFER"];
+    //check if already logged in
+    if( isset($_SESSION["logged_in"]) && $_SESSION["logged_in"] ){
+      echo"<a>you are already logged in</a>";
+      //header("Location:$past");
+    //check if user is trying to log in
+    } elseif(isset($_POST["username"]) && isset($_POST["password"])){
 
-    $rows = $dbh->query("SELECT * FROM USERS WHERE Login = $username");
-    /*
-    USERS [0] = UserID
-    USERS [1] = LOGIN
-    USERS [2] = PASSWORD
-    USERS [3] = USERTYPE
-    */
-    define("USERID", 0);
-    define("LOGIN", 1);
-    define("PASSOWORD", 2);
-    define("TYPE", 3);
-    if($rows){
-        if($rows[0][PASSWORD] == $password){
-            $_SESSION["logged_in"] = true;
-            $_SESSION["username"] = $username;
-            $_SESSION["user_id"] = $rows[0][USERID];
-            $_SESSION["user_type"] = $rows[0][TYPE];
-        }
-        else{
-            echo("<a>Error: Incorrect password</a>");
-        }
-    }
-    else{
-        echo("<a>Error: Invalid Username</a>");
-    }
-    
+      echo("<a>In login check</a><br>");
+      //Connecting to database
+      $dbh = new PDO('mysql:host=localhost;dbname=OMTS', "root", "");
+      //foreach($dbh->query("SELECT * FROM USERS;") as $test_row){
+      //   print_r($test_row);
+      //}
+      //initializing variables
+      $username = $password = "";
+      $username = clean_input($_POST["username"]);
+      $password = clean_input($_POST["password"]);
 
 
+      //echo("<a>got password: $password and user: $username </a><br>");
+      //echo("Query is : SELECT * FROM USERS WHERE Login = '$username' <br>");
+
+      //Querying databases
+      $rows = $dbh->query("SELECT * FROM Users WHERE Login = '$username'");
+      echo($rows -> queryString);
+
+      //while($row = $rows->fetch()){
+      //  echo("<a>Row is:</a><br>");
+      //  print_r($row);
+      //}
+      if($rows){
+          $row = $rows -> fetch();
+          print_r($row);
+          echo("Password typed is: $password, actual is ".$row["Password"]);
+          if($row["Password"] == $password){
+              echo("<a>Checked values, and logged in</a>");
+              $_SESSION["logged_in"] = true;
+              $_SESSION["username"] = $username;
+              $_SESSION["user_id"] = $row["UserID"];
+              $_SESSION["user_type"] = $rows["UserType"];
+          }
+          else{
+              echo("<a>Error: Incorrect password</a>");
+          }
+      } else{
+          echo("<a>Error: Invalid Username</a>");
+      }
+    } else { //User has not yet tried to log in
+      echo("Impossible Error 1");
+    }
+
+    //A little bit of safty
     function clean_input($data) {
         $data = trim($data);
         $data = stripslashes($data);
@@ -71,9 +88,9 @@
         <form class="text-center bg-dark form-signin text-light" action="login.php" method="POST">
           <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
           <label for="inputuserName" class="sr-only">Username</label>
-          <input name="username" type="text" id="inputUsername" class="form-control" placeholder="Username" required     autofocus>
+          <input name="username" type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus >
           <label for="inputPassword" class="sr-only">Password</label>
-          <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password"     required>
+          <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
           <div class="checkbox mb-3">
             <label>
               <input type="checkbox" value="remember-me"> Remember me
