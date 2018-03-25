@@ -1,14 +1,14 @@
 <?php
     session_start();
-    //$past = $_SERVER["HTTP_REFER"];
+    $past = $_SERVER["HTTP_REFERER"];
     //check if already logged in
     if( isset($_SESSION["logged_in"]) && $_SESSION["logged_in"] ){
       echo"<a>you are already logged in</a>";
-      //header("Location:$past");
+      header("Location:$past");
     //check if user is trying to log in
     } elseif(isset($_POST["username"]) && isset($_POST["password"])){
 
-      echo("<a>In login check</a><br>");
+      //echo("<a>In login check</a><br>");
       //Connecting to database
       $dbh = new PDO('mysql:host=localhost;dbname=OMTS', "root", "");
       //foreach($dbh->query("SELECT * FROM USERS;") as $test_row){
@@ -41,6 +41,7 @@
               $_SESSION["username"] = $username;
               $_SESSION["user_id"] = $row["UserID"];
               $_SESSION["user_type"] = $rows["UserType"];
+              header("Location:$past");
           }
           else{
               echo("<a>Error: Incorrect password</a>");
@@ -49,7 +50,7 @@
           echo("<a>Error: Invalid Username</a>");
       }
     } else { //User has not yet tried to log in
-      echo("Impossible Error 1");
+      echo("");
     }
 
     //A little bit of safty
