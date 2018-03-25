@@ -1,3 +1,8 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <header>
     <div class="collapse bg-light" id="navbarHeader">
         <div class="container">
@@ -13,14 +18,16 @@
                             <a href="login.php" class="text-dark">Log in</a>
                             
                         </li>
-                        <?
-                        if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"]){
-                            echo("
-                            <li>
-                                <a href='login.php' class='text-dark'>Log out</a>
-                            </li>");
-                        }
-                        ?>
+                        <li>
+                            <?php
+                            //echo "Session set: ".isset($_SESSION["logged_in"]);
+                            if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"]){
+                                ?>
+                                <a href='login.php?logout=0' class='text-dark'>Log out</a>
+                                <?php
+                            }
+                            ?>
+                        </li>
                         <li>
                             <a href="admin/" class="text-dark">Admin Page</a>
                         </li>

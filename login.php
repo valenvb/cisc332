@@ -1,8 +1,17 @@
 <?php
-    session_start();
+    if (session_status() == PHP_SESSION_NONE) {
+      session_start();
+    }
     $past = $_SERVER["HTTP_REFERER"];
+    //checking for logout
+    if(isset($_GET["logout"]) && $_GET["logout"]=="0"){
+      echo "Logged out";
+      $_SESSION["logged_in"] = false;
+      session_destroy();
+      header("Location:$past"); 
+    }
     //check if already logged in
-    if( isset($_SESSION["logged_in"]) && $_SESSION["logged_in"] ){
+    if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"] ){
       echo"<a>you are already logged in</a>";
       header("Location:$past");
     //check if user is trying to log in
@@ -25,7 +34,7 @@
 
       //Querying databases
       $rows = $dbh->query("SELECT * FROM Users WHERE Login = '$username'");
-      echo($rows -> queryString);
+      //echo($rows -> queryString);
 
       //while($row = $rows->fetch()){
       //  echo("<a>Row is:</a><br>");
@@ -33,15 +42,15 @@
       //}
       if($rows){
           $row = $rows -> fetch();
-          print_r($row);
-          echo("Password typed is: $password, actual is ".$row["Password"]);
+          //print_r($row);
+          //echo("Password typed is: $password, actual is ".$row["Password"]);
           if($row["Password"] == $password){
-              echo("<a>Checked values, and logged in</a>");
+              //echo("<a>Checked values, and logged in</a>");
               $_SESSION["logged_in"] = true;
               $_SESSION["username"] = $username;
               $_SESSION["user_id"] = $row["UserID"];
-              $_SESSION["user_type"] = $rows["UserType"];
-              header("Location:$past");
+              $_SESSION["user_type"] = $row["UserType"];
+              header("Location:index.php");
           }
           else{
               echo("<a>Error: Incorrect password</a>");
@@ -100,6 +109,7 @@
           <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
           <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
         </form>
+        <a href = "newUser.php">New Account</a>
       </div>
     </main>
 
