@@ -138,7 +138,7 @@ if(isset($when)){
               <div class="row">
                 <div class="col-md-6 mb-3">
                 
-                  <select name="date" onchange="formProgress();" class="form-control" id="complex-select">
+                  <select name="date" onchange="formProgress();" class="custom-select" id="complex-select">
                     <?php 
                       $Alldates = $db->query("SELECT DISTINCT SDate FROM showing S where movieid=".$movieID);
                       while ($date = $Alldates->fetch()) {
@@ -161,7 +161,7 @@ if(isset($when)){
               <div class="row">
                 <div class="col-md-6 mb-3">
                 
-                  <select name="where" onchange="formProgress();" class="form-control" id="complex-select">
+                  <select name="where" onchange="formProgress();" class="custom-select" id="complex-select">
                     <?php 
                     $complexes = $db->query("SELECT DISTINCT S.`ComplexNo`, `Name`, `Address` from showing S, complex C, theater T where S.`TheaterNo`=T.`TheaterNo` and S.`ComplexNo`=T.`ComplexNo` and S.`ComplexNo`=C.`ComplexNo` and movieid=".$movieID." AND SDate='".$when."'");
                      // print($complexes->queryString);
@@ -191,7 +191,7 @@ if(isset($when)){
 
               //print($showsQuery->queryString);
 ?>
-              <select name="showTime" onchange="formProgress();" class="form-control" id="complex-select">
+              <select name="showTime" onchange="formProgress();" class="custom-select" id="complex-select">
                 <?php
               while($show = $showsQuery->fetch()){
                 echo " 
@@ -209,7 +209,7 @@ if(isset($when)){
             <div class="col-md-6">
             <?php if(isset($ORDER_SUCCESS) && $ORDER_SUCCESS==-1){?>
             <div class="alert alert-warning" role="alert">
-               Sorry, we don't have that many tickets availabel at the moment.
+               Sorry, we don't have that many tickets available at the moment.
             </div>
             <?php } ?>
           <input class="form-control" min=0 id="quantity" name="quantity" type="number"></input>
