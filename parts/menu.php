@@ -1,3 +1,8 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <header>
     <div class="collapse bg-light" id="navbarHeader">
         <div class="container">
@@ -10,8 +15,25 @@
                 <div class="col-sm-4 offset-md-1 py-4">
                     <ul class="list-unstyled">
                         <li>
+                        <?php
+                        if(!(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"])){
+                            ?>
                             <a href="login.php" class="text-dark">Log in</a>
-                            
+                            <?php
+                        } else {
+                            echo("<a>User: ".$_SESSION['username']."</a>");
+                        }
+                        ?>
+                        </li>
+                        <li>
+                            <?php
+                            //echo "Session set: ".isset($_SESSION["logged_in"]);
+                            if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"]){
+                                ?>
+                                <a href='login.php?logout=0' class='text-dark'>Log out</a>
+                                <?php
+                            }
+                            ?>
                         </li>
                         <li>
                             <a href="admin/" class="text-dark">Admin Page</a>
