@@ -13,6 +13,7 @@ $info = $db -> query("SELECT * FROM MEMBER WHERE UserID =".$_SESSION["user_id"])
 $email = $info["Email"];
 $name = $info["Name"];
 $address = $info["Address"];
+echo $address;
 $phone = $info["Phone"];
 $creditNo = $info["CreditNo"];
 $creditExp = $info["CreditExp"];
@@ -141,13 +142,13 @@ $creditExp = $info["CreditExp"];
           <label for="inputName" class="sr-only">Name</label>
           <input id="inputName" name = "inputName" class="form-control" placeholder="Name" required="" autofocus="" type="text" value = <?php echo($name);?>>
           <label for="inputAddress" class="sr-only">Address</label>
-          <input id="inputAddress" name = "inputAddress" class="form-control" placeholder="Address" autofocus="" type="text" value = <?php echo($address);?>>
+          <input id="inputAddress" name = "inputAddress" class="form-control" placeholder="Address" autofocus="" type="text" value ="<?php echo($address);?>">
           <label for="inputPhone" class="sr-only">Phone</label>
           <input id="inputPhone" name = "inputPhone" class="form-control" placeholder="Phone" autofocus="" type="tel" value = <?php echo($phone);?>>
           <label for="inputCreditNo" class="sr-only">Credit Card Number</label>
           <input id="inputCreditNo" name = "inputCreditNo" class="form-control" placeholder="Credit Card Number" required="" autofocus="" type="number" size=16 value = <?php echo($creditNo);?>>
           <label for="inputCreditExp" class="sr-only">Credit Card Expiry</label>
-          <input id="inputCreditExp" name = "inputCreditExp" class="form-control" placeholder="Credit Card Expiry" required="" autofocus="" type="number" size=4 value = <?php echo($creditExp);?>>
+          <input id="inputCreditExp" name = "inputCreditExp" class="form-control" placeholder="Credit Card Expiry" required="" autofocus="" type="number" size=4 value ="<?php echo($creditExp);?>">
         <button class="btn btn-lg btn-primary btn-block" type="submit">Save</button>
         <p class="mt-5 mb-3 text-muted">© 2017-2018</p>
       </form>

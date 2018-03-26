@@ -10,7 +10,7 @@ $action = $_GET['action'];
 
 if($action=="dm"){ //delete member
     $id = $_GET["id"];
-    $del = $db->prepare("Delete from members, users where userID=".$id);
+    $del = $db->prepare("Delete from member where userID=".$id);
 
     if($del->execute()){
         //print("DELETED");

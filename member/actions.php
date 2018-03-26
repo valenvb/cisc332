@@ -6,7 +6,7 @@ if(!isset($_GET["action"])){
 }
 
 $action = $_GET['action'];
-print($action);
+//print($action);
 
 if($action=="dr"){ //delete reservation
     $s_time = $_GET["s_time"];
@@ -14,7 +14,7 @@ if($action=="dr"){ //delete reservation
     $m_id = $_GET["movie_id"];
     $u_id = $_GET["uid"];
     $del = $db->prepare("DELETE FROM RESERVATION WHERE userID=".$u_id." AND STIME = '".$s_time."' AND SDATE = '".$s_day."' AND MOVIEID = ".$m_id);
-    echo("DELETE FROM RESERVATION WHERE userID=".$u_id." AND STIME = '".$s_time."' AND SDATE = '".$s_day."' AND MOVIEID = ".$m_id);
+    //echo("DELETE FROM RESERVATION WHERE userID=".$u_id." AND STIME = '".$s_time."' AND SDATE = '".$s_day."' AND MOVIEID = ".$m_id);
     if($del->execute()){
         //print("DELETED");
     } else {

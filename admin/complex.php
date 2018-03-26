@@ -271,7 +271,7 @@ while($show = $shows->fetch()){
 
           <div class="col form-group">
             <label for="where">Complex</label>
-            <select disabled name="where" class="custom-select" type="text">
+            <select name="where" class="custom-select" type="text">
 
               <?php 
                 $cmplxs = $db->query("select name, complexNo from complex");
@@ -288,7 +288,7 @@ while($show = $shows->fetch()){
               <?php 
                 $theaters = $db->query("select * from theater where complexNo=".$complexNo);
                 while($t=$theaters->fetch()){
-                  echo"<option value='".$t['theaterNo']."'  >".$t['TheaterNo']." (".$t["Screen"].", ".$t["Seats"].")</option>";
+                  echo"<option value='".$t['TheaterNo']."'  >".$t['TheaterNo']." (".$t["Screen"].", ".$t["Seats"].")</option>";
                 }
               ?>
 
