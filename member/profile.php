@@ -1,6 +1,7 @@
 <?php
 include '../lib/database.php';
 include '../parts/menu.php';
+include '../parts/safety.php';
 $userID = $username = $password = $email = $name = $address = $phone = $creditNo = $creditExp = null;
 
 $info = $db -> query("SELECT * FROM USERS WHERE UserID = ".$_SESSION["user_id"]) -> fetch();
@@ -8,7 +9,7 @@ $userID = $_SESSION["user_id"];
 $username = $info["Login"];
 $password = $info["Password"];
 $info = $db -> query("SELECT * FROM MEMBER WHERE UserID =".$_SESSION["user_id"]) -> fetch();
-print_r($info);
+//print_r($info);
 $email = $info["Email"];
 $name = $info["Name"];
 $address = $info["Address"];
@@ -51,9 +52,9 @@ $creditExp = $info["CreditExp"];
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="reservations.php">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
-                  History
+                  Reservations
                 </a>
               </li>
               <li class="nav-item">
@@ -70,9 +71,9 @@ $creditExp = $info["CreditExp"];
           <?php
           
           $error = "";
-          if(isset($_POST["inputUsername"]) && isset($_POST["inputEmail"]) &&
+          if(isset($_POST["inputEmail"]) &&
           isset($_POST["inputPassword"]) && isset($_POST["inputPassword2"]) &&
-          isset($_POST["inputFName"]) && isset($_POST["inputLName"]) &&
+          isset($_POST["inputName"]) &&
           isset($_POST["inputCreditNo"]) && isset($_POST["inputCreditExp"])){
   
           $username = clean_input($_POST["inputUsername"]);
@@ -87,13 +88,6 @@ $creditExp = $info["CreditExp"];
   
           //Checking username is unique
           $freeUser = $db->query("SELECT COUNT(*) FROM USERS WHERE Login = '$username' AND UserType = 'M'");
-          //echo(gettype($freeUser));
-          //echo($freeUser == false);
-          //print_r($freeUser->queryString);
-          //echo($freeUser -> fetchColumn()[0]);
-          if($db->query("SELECT COUNT(*) FROM USERS WHERE Login = '$username' AND UserType = 'M'") -> fetchColumn()[0]){
-              $error .= "Username already in use <br>";
-          }
   
           //Checking for password equality
           if($_POST["inputPassword"] !== $_POST["inputPassword2"]){
@@ -109,7 +103,7 @@ $creditExp = $info["CreditExp"];
               //If there are no errors, we will set our variables
               $email = clean_input($_POST["inputEmail"]);
               $password = clean_input($_POST["inputPassword"]);
-              $name = clean_input($_POST["inputFName"] ." ". $_POST["inputLName"]);
+              $name = clean_input($_POST["inputName"]);
               if(isset($_POST["inputAddress"])){
                   $address = clean_input($_POST["inputAddress"]);
               }
@@ -119,20 +113,13 @@ $creditExp = $info["CreditExp"];
               $creditNo = clean_input($_POST["inputCreditNo"]);
               $creditExp = clean_input($_POST["inputCreditExp"]);
   //1248163264128256
-              
+              //echo"Here";
               $db -> query("DELETE FROM MEMBER WHERE UserID = '$userID'");
               $db -> query("DELETE FROM USERS WHERE UserID = '$userID'");
               //echo("Inserting into database");
               $db -> query("INSERT INTO USERS (Login, Password, UserType) VALUES ($userID,'".$username."','". $password."', 'M')");
-              //echo $checkQuery->queryString;
-              //echo "<br>";
-              $userID = $db -> query("SELECT UserID from Users WHERE Login = '$username'") -> fetch()["UserID"];
-              //print_r($userID);
-              //echo "<br>";
               $sql = "INSERT INTO MEMBER VALUES ($userID,'$name','$address',$phone,'$email',$creditNo,$creditExp)";
-              //echo $sql;
-              //echo "<br>";
-              $checkQuery = $db -> query($sql);
+              $db -> query($sql);
               //echo $checkQuery->queryString;
               
               //logging user in
@@ -140,7 +127,6 @@ $creditExp = $info["CreditExp"];
               $_SESSION["username"] = $username;
               $_SESSION["user_id"] = $userID;
               $_SESSION["user_type"] = 'M';
-              header("Location:index.php");
           }
       } else {
           //echo($error);
@@ -151,19 +137,19 @@ $creditExp = $info["CreditExp"];
       <form class="form-signin" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST">
           <h1 class="h3 mb-3 font-weight-normal">Edit User</h1>
           <label for="inputUsername" class="sr-only">Username</label>
-          <input id="inputUsername" name = "inputUsername" class="form-control" placeholder="Username" required="" autofocus="" type="text" value = <?php echo($username);?>>
+          <input id="inputUsername" name = "inputUsername" class="form-control" placeholder="Username" enabled=false autofocus="" type="text" value = <?php echo($username);?>>
           <label for="inputEmail" class="sr-only">Email address</label>
           <input id="inputEmail" name = "inputEmail" class="form-control" placeholder="Email address" required="" autofocus="" type="email" value = <?php echo($email);?>>
           <label for="inputPassword" class="sr-only">Password</label>
           <input id="inputPassword" name = "inputPassword" class="form-control" placeholder="Password" required="" type="password" value = <?php echo($password);?>>
           <label for="inputPassword2" class="sr-only">Confirm Password</label>
           <input id="inputPassword2" name = "inputPassword2" class="form-control" placeholder=" Confirm Password" required="" type="password" value = <?php echo($password);?>>
-          <label for="inputFName" class="sr-only">Name</label>
-          <input id="inputFName" name = "inputFName" class="form-control" placeholder="Name" required="" autofocus="" type="text" value = <?php echo($name);?>>
+          <label for="inputName" class="sr-only">Name</label>
+          <input id="inputName" name = "inputName" class="form-control" placeholder="Name" required="" autofocus="" type="text" value = <?php echo($name);?>>
           <label for="inputAddress" class="sr-only">Address</label>
           <input id="inputAddress" name = "inputAddress" class="form-control" placeholder="Address" autofocus="" type="text" value = <?php echo($address);?>>
           <label for="inputPhone" class="sr-only">Phone</label>
-          <input id="inputPhone" name = "inputPhone" class="form-control" placeholder="Phone" autofocus="" type="tel">
+          <input id="inputPhone" name = "inputPhone" class="form-control" placeholder="Phone" autofocus="" type="tel" value = <?php echo($phone);?>>
           <label for="inputCreditNo" class="sr-only">Credit Card Number</label>
           <input id="inputCreditNo" name = "inputCreditNo" class="form-control" placeholder="Credit Card Number" required="" autofocus="" type="number" size=16 value = <?php echo($creditNo);?>>
           <label for="inputCreditExp" class="sr-only">Credit Card Expiry</label>
