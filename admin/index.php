@@ -66,13 +66,15 @@
         </nav>
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4"><div style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;" class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+          
+        <div id="mov_list">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
             <h1 class="h2">Movies</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
               <div class="btn-group mr-2">
                 <button class="btn btn-sm btn-outline-secondary">Add</button>
               </div>
-             
+
             </div>
           </div>
 
@@ -95,7 +97,6 @@ $movies = $db->query('SELECT * from Movie');
 
 while($movie = $movies->fetch()){
   echo "<tr><td>".$movie['MovieID']."</td><td>".$movie["Title"]."</td><td>".$movie["RunTime"]."</td><td>".$movie["Rating"]."</td><td>".$movie["SDate"]."</td></tr>";
-
 };
 
 ?>              
@@ -103,9 +104,49 @@ while($movie = $movies->fetch()){
               </tbody>
             </table>
           </div>
+          </div> <!--END MOVIE TABLE-->
+
+
+
+                  <div id="cust_list">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+            <h1 class="h2">Customers</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+              <div class="btn-group mr-2">
+                <button class="btn btn-sm btn-outline-secondary">Add</button>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-striped table-sm">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Username</th>
+                </tr>
+              </thead>
+              <tbody>
+<?php 
+
+include '../lib/database.php';
+$users = $db->query("SELECT userID, login as username from Users where UserType='M'");
+//print($users->queryString);
+while($user = $users->fetch()){
+  echo "<tr><td>".$user['userID']."</td><td>".$user["username"]."</td></tr>";
+};
+
+?>              
+                
+              </tbody>
+            </table>
+          </div>
+          </div> <!--END User TABLE-->
         </main>
       </div>
     </div>
+    
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
