@@ -31,14 +31,17 @@ if (session_status() == PHP_SESSION_NONE) {
                             <a href='member/profile.php' class='text-dark'>Profile</a>
                             <li>
                             <li>
-                            <a href='login.php?logout=0' class='text-dark'>Log out</a>
+                            <a href='/omts/login.php?logout=0' class='text-dark'>Log out</a>
                             <li>
                             <?php
                         }
-                        ?>
-                        <li>
+                        if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"] && $_SESSION['user_type']==="A"){?>
+<li>
                             <a href="admin/" class="text-dark">Admin Page</a>
                         </li>
+                        <?php } 
+                        ?>
+                        
                     </ul>
                 </div>
             </div>

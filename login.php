@@ -9,7 +9,7 @@
       //echo "Logged out";
       $_SESSION["logged_in"] = false;
       session_destroy();
-      header("Location:$past"); 
+      header("Location:/omts/"); 
     }
     //check if already logged in
     if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"] ){
