@@ -2,6 +2,7 @@
     if (session_status() == PHP_SESSION_NONE) {
       session_start();
     }
+    include 'lib/database.php';
     $past = $_SERVER["HTTP_REFERER"];
     //checking for logout
     if(isset($_GET["logout"]) && $_GET["logout"]=="0"){
@@ -19,8 +20,7 @@
 
       //echo("<a>In login check</a><br>");
       //Connecting to database
-      $dbh = new PDO('mysql:host=localhost;dbname=OMTS', "root", "");
-      //foreach($dbh->query("SELECT * FROM USERS;") as $test_row){
+      //foreach($db->query("SELECT * FROM USERS;") as $test_row){
       //   print_r($test_row);
       //}
       //initializing variables
@@ -33,7 +33,7 @@
       //echo("Query is : SELECT * FROM USERS WHERE Login = '$username' <br>");
 
       //Querying databases
-      $rows = $dbh->query("SELECT * FROM Users WHERE Login = '$username'");
+      $rows = $db->query("SELECT * FROM Users WHERE Login = '$username'");
       //echo($rows -> queryString);
 
       //while($row = $rows->fetch()){

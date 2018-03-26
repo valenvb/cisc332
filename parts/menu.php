@@ -23,16 +23,19 @@ if (session_status() == PHP_SESSION_NONE) {
                         }
                         ?>
                         </li>
-                        <li>
-                            <?php
-                            //echo "Session set: ".isset($_SESSION["logged_in"]);
-                            if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"]){
-                                ?>
-                                <a href='login.php?logout=0' class='text-dark'>Log out</a>
-                                <?php
-                            }
+                        <?php
+                        //echo "Session set: ".isset($_SESSION["logged_in"]);
+                        if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"]){
                             ?>
-                        </li>
+                            <li>
+                            <a href='../member/profile.php' class='text-dark'>Profile</a>
+                            <li>
+                            <li>
+                            <a href='../login.php?logout=0' class='text-dark'>Log out</a>
+                            <li>
+                            <?php
+                        }
+                        ?>
                         <li>
                             <a href="admin/" class="text-dark">Admin Page</a>
                         </li>
