@@ -1,9 +1,8 @@
-<!DOCTYPE html>
 <?php
     if (session_status() == PHP_SESSION_NONE) {
         session_start();
     }
-    include 'parts/menu.php';
+    
     include 'parts/safety.php';
     //initializing variables
     $error = "";
@@ -43,7 +42,7 @@
         isset($_POST["inputCreditNo"]) && isset($_POST["inputCreditExp"])){
 
         $username = clean_input($_POST["inputUsername"]);
-        $dbh = new PDO('mysql:host=localhost;dbname=OMTS', "root", "");
+        $dbh = new PDO('mysql:host=localhost;dbname=OMTS', "test", "test");
         //echo("username:".$username."<br>");
         //echo($dbh->query("SELECT * FROM USERS;")-> queryString . "<br>");
         //foreach($dbh->query("SELECT * FROM USERS;") as $row){
@@ -72,7 +71,7 @@
         }
 
         if($error){
-            echo($error);
+            //echo($error);
         } else {
             //If there are no errors, we will set our variables
             $email = clean_input($_POST["inputEmail"]);
@@ -112,6 +111,7 @@
     }
 
 ?>
+<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
