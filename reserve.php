@@ -1,16 +1,81 @@
 <?php 
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+  session_start();
+}
 if( !isset($_SESSION['logged_in']) || (isset($_SESSION['logged_in']) && !$_SESSION['logged_in']) ) {
-  $_SESSION['login_rediect'] = $_SERVER['REQUEST_URI'];
-  print("NO SESSION");
-  //header('Location:login.php');
+  
+  header('Location:login.php');
 }
 
-$movieID = $_GET["movie_id"];
+include 'lib/database.php';
 
+
+if(isset($_POST["movie_id"])){
+  //do da shit in da DB
+  $userID = $_SESSION["user_id"];
+  $movie_id=$_POST["movie_id"];
+  $when=$_POST["date"];
+  $where=$_POST["where"];
+  $startTime = str_replace("-", ":",$_POST["where"]);
+  $qty = $_POST["quantity"];
+
+  $remain = $db->query("SELECT Seats-`BookedSeats` as remain from showing S, complex C, theater T where S.`TheaterNo`=T.`TheaterNo` and S.`ComplexNo`=T.`ComplexNo` and S.`ComplexNo`=C.`ComplexNo` and movieid=".$movie_id." AND C.ComplexNo=".$where." AND S.SDate=".$when." AND S.STime=".$startTime)->fetchColumn()[0];
+
+  if($qty<$remain){
+    print("SEATS NOT AVAIABLE");
+  } else {
+
+    $insertString = "INSERT INTO Reservation (UserID, STime, SDate, TheaterNo, ComplexNo, MovieID, NumTickets) VALUES (".$userID.", ".$startTime.", ".$when.", 2, ".$where.", ".$movie_id.", ".$qty.")";
+
+    if($db->query($insertString)==TRUE){
+      print("ADDED!");
+    }
+
+  }
+
+
+
+}
+
+
+
+$movieID = $_GET["movie_id"];
+$when = (isset($_GET["date"]) ? $_GET["date"] : null);
+$where = (isset($_GET["where"]) ? $_GET["where"] : null);
+
+
+$movie = $db->query("SELECT * from movie where MovieID=".$movieID)->fetch(PDO::FETCH_ASSOC);
+//echo $movie->queryString;
+//$movie = $movies->fetch();
+
+if(!isset($when)){
+  $dates = $db->query("SELECT distinct * FROM showing S where movieid=".$movieID);
+  if($db->query("SELECT distinct count(*) C from showing where movieid=".$movieID)->fetchColumn()[0]==1) {
+    //echo"ONE ONLY";
+    $when = $dates->fetch()["SDate"];
+  }
+}
+
+if(isset($when)){
+
+  $complexes = $db->query("SELECT distinct SDate, S.`ComplexNo`, `Name`, `Address` from showing S, complex C, theater T where S.`TheaterNo`=T.`TheaterNo` and S.`ComplexNo`=T.`ComplexNo` and S.`ComplexNo`=C.`ComplexNo` and movieid=".$movieID." AND SDate='".$when."'");
+
+  
+  $complexCount = $db->query("select count(distinct C.ComplexNo) from showing S, complex C, theater T where S.`TheaterNo`=T.`TheaterNo` and S.`ComplexNo`=T.`ComplexNo` and S.`ComplexNo`=C.`ComplexNo` and movieid=".$movieID." and SDate='".$when."'")->fetchColumn()[0];
+  
+  if($complexCount==1){
+    $where = $complexes->fetch()["ComplexNo"];
+  }
+
+
+}
+
+//$showsQuery = $db->query("select S.`MovieID`, S.`TheaterNo`, S.`STime`, S.`SDate`, S.`ComplexNo`, `BookedSeats`, `Name`, `Address`, `Seats` from showing S, complex C, theater T where S.`TheaterNo`=T.`TheaterNo` and S.`ComplexNo`=T.`ComplexNo` and S.`ComplexNo`=C.`ComplexNo` and movieid=".$movieID);
+
+
+//print_r($shows);
 
 ?>
-
 
 
 <!doctype html>
@@ -35,160 +100,101 @@ $movieID = $_GET["movie_id"];
 
     <div class="container">
       <div class="py-5 text-center">
-        <h2>Reserve Seats to <?php echo $movieID?></h2>
+        <h2>Reserve Seats to <?php echo $movie['Title']?></h2>
       </div>
 
-        <div class="col-md-12">
-          <h4 class="mb-3">Where Do You Want To See The Movie</h4>
-          <form class="needs-validation" novalidate>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="complex">Theatre Complex: </label>
+          <div class="col-md-12">
+            <form class="needs-validation" method="POST" novalidate>
+              <input name="movie_id" type="text" hidden value="<?php echo $movieID;?>"/>
+
+              <h4 class="mb-3">Date</h4>
+              <div class="row">
+                <div class="col-md-6 mb-3">
                 
-                <select name="complex" class="form-control" id="complex-select">
-                  <option value="121">Springfield</option>
-                  <option value="124">Cineplex</option>
-                </select>
+                  <select name="date" onchange="formProgress();" class="form-control" id="complex-select">
+                    <?php 
+                      $Alldates = $db->query("SELECT DISTINCT SDate FROM showing S where movieid=".$movieID);
+                      while ($date = $Alldates->fetch()) {
+                        echo "<option ".(isset($_GET['date']) && $_GET['date']==$date['SDate'] ?   "selected=\"selected\"":"" )." value=".$date['SDate'].">".$date['SDate']."</option>";
+                      }
+                    ?>
+                  </select>
 
 
-                <div class="invalid-feedback">
-                  Select a theater complex.
+                  <div class="invalid-feedback">
+                    Select a date!.
+                  </div>
                 </div>
-              </div>
               
+              </div>
+
+              <?php if (isset($when)){ ?>
+
+              <h4 class="mb-3">Where Do You Want To See The Movie</h4>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                
+                  <select name="where" onchange="formProgress();" class="form-control" id="complex-select">
+                    <?php 
+                    $complexes = $db->query("SELECT DISTINCT S.`ComplexNo`, `Name`, `Address` from showing S, complex C, theater T where S.`TheaterNo`=T.`TheaterNo` and S.`ComplexNo`=T.`ComplexNo` and S.`ComplexNo`=C.`ComplexNo` and movieid=".$movieID." AND SDate='".$when."'");
+                     // print($complexes->queryString);
+                      while ($complex=$complexes->fetch()) {
+                        echo "<option ".(isset($where) && $where==$complex['ComplexNo'] ?   "selected=\"selected\"":"" )." value=".$complex['ComplexNo'].">".$complex['Name']." (".$complex["Address"].")"."</option>";
+                      }
+                    ?>
+                  </select>
+
+
+                  <div class="invalid-feedback">
+                    Select a theater complex.
+                  </div>
+                </div>
+              
+              </div>
+
+          
+          <?php } if(isset($where)){ ?>
+
+          <h4 class="mb-3">Select a showtime</h4>
+          <div class="d-block my-3">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            
+            <?php 
+              $showsQuery = $db->query("SELECT S.`MovieID`, S.`TheaterNo`, S.`STime`, S.`SDate`,  `BookedSeats`, `Seats` from showing S, complex C, theater T where S.`TheaterNo`=T.`TheaterNo` and S.`ComplexNo`=T.`ComplexNo` and S.`ComplexNo`=C.`ComplexNo` and BookedSeats<Seats and movieid=".$movieID." AND C.ComplexNo=".$where);
+
+              //print($showsQuery->queryString);
+
+              while($show = $showsQuery->fetch()){
+                echo " <label class=\"btn btn-secondary active\">
+                <input type=\"radio\" name=\"showTime\" value=\"".str_replace(":", "-", $show['STime'])."\" id=\"".$show['STime']."\"> ".$show['STime']."</label> ";
+              } ?>
             </div>
 
-            <div class="mb-3">
-              <label for="username">Username</label>
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">@</span>
-                </div>
-                <input type="text" class="form-control" id="username" placeholder="Username" required>
-                <div class="invalid-feedback" style="width: 100%;">
-                  Your username is required.
-                </div>
-              </div>
-            </div>
 
-            <div class="mb-3">
-              <label for="email">Email <span class="text-muted">(Optional)</span></label>
-              <input type="email" class="form-control" id="email" placeholder="you@example.com">
-              <div class="invalid-feedback">
-                Please enter a valid email address for shipping updates.
-              </div>
-            </div>
+            
+          </div>
+          
+          <h4 class="mb-3">How Many Tickets?</h4>
+          <div class="row">
+            <div class="col-md-6">
+          <input class="form-control" min=0 id="quantity" name="quantity" type="number"></input>
+          </div>
+          </div>
+<br>
+          <button class="btn btn-primary btn-lg btn-block" type="submit">Reserve Now!</button>
 
-            <div class="mb-3">
-              <label for="address">Address</label>
-              <input type="text" class="form-control" id="address" placeholder="1234 Main St" required>
-              <div class="invalid-feedback">
-                Please enter your shipping address.
-              </div>
-            </div>
+          <?php } ?>
 
-            <div class="mb-3">
-              <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
-              <input type="text" class="form-control" id="address2" placeholder="Apartment or suite">
-            </div>
+            
 
-            <div class="row">
-              <div class="col-md-5 mb-3">
-                <label for="country">Country</label>
-                <select class="custom-select d-block w-100" id="country" required>
-                  <option value="">Choose...</option>
-                  <option>United States</option>
-                </select>
-                <div class="invalid-feedback">
-                  Please select a valid country.
-                </div>
-              </div>
-              <div class="col-md-4 mb-3">
-                <label for="state">State</label>
-                <select class="custom-select d-block w-100" id="state" required>
-                  <option value="">Choose...</option>
-                  <option>California</option>
-                </select>
-                <div class="invalid-feedback">
-                  Please provide a valid state.
-                </div>
-              </div>
-              <div class="col-md-3 mb-3">
-                <label for="zip">Zip</label>
-                <input type="text" class="form-control" id="zip" placeholder="" required>
-                <div class="invalid-feedback">
-                  Zip code required.
-                </div>
-              </div>
-            </div>
-            <hr class="mb-4">
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" id="same-address">
-              <label class="custom-control-label" for="same-address">Shipping address is the same as my billing address</label>
-            </div>
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" id="save-info">
-              <label class="custom-control-label" for="save-info">Save this information for next time</label>
-            </div>
-            <hr class="mb-4">
-
-            <h4 class="mb-3">Payment</h4>
-
-            <div class="d-block my-3">
-              <div class="custom-control custom-radio">
-                <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-                <label class="custom-control-label" for="credit">Credit card</label>
-              </div>
-              <div class="custom-control custom-radio">
-                <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-                <label class="custom-control-label" for="debit">Debit card</label>
-              </div>
-              <div class="custom-control custom-radio">
-                <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input" required>
-                <label class="custom-control-label" for="paypal">Paypal</label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="cc-name">Name on card</label>
-                <input type="text" class="form-control" id="cc-name" placeholder="" required>
-                <small class="text-muted">Full name as displayed on card</small>
-                <div class="invalid-feedback">
-                  Name on card is required
-                </div>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="cc-number">Credit card number</label>
-                <input type="text" class="form-control" id="cc-number" placeholder="" required>
-                <div class="invalid-feedback">
-                  Credit card number is required
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3 mb-3">
-                <label for="cc-expiration">Expiration</label>
-                <input type="text" class="form-control" id="cc-expiration" placeholder="" required>
-                <div class="invalid-feedback">
-                  Expiration date required
-                </div>
-              </div>
-              <div class="col-md-3 mb-3">
-                <label for="cc-expiration">CVV</label>
-                <input type="text" class="form-control" id="cc-cvv" placeholder="" required>
-                <div class="invalid-feedback">
-                  Security code required
-                </div>
-              </div>
-            </div>
-            <hr class="mb-4">
-            <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+            
+            
           </form>
         </div>
       </div>
 
       <footer class="my-5 pt-5 text-muted text-center text-small">
-        <p class="mb-1">&copy; 2017-2018 Company Name</p>
+        <p class="mb-1">&copy; 2017-2018 OMTS</p>
         <ul class="list-inline">
           <li class="list-inline-item"><a href="#">Privacy</a></li>
           <li class="list-inline-item"><a href="#">Terms</a></li>
@@ -206,25 +212,20 @@ $movieID = $_GET["movie_id"];
     <script src="js/holder.min.js"></script>
     <script>
       // Example starter JavaScript for disabling form submissions if there are invalid fields
-      (function() {
-        'use strict';
+      
+        
+      var movieID = <?php echo $movieID; ?>;
 
-        window.addEventListener('load', function() {
-          // Fetch all the forms we want to apply custom Bootstrap validation styles to
-          var forms = document.getElementsByClassName('needs-validation');
+      function formProgress(){
+        console.log("CALL")
+        var cp = window.location.href;
+        var getString = cp.split("?")[0]+"?movie_id="+movieID;
+        $(".form-control").each(function() {
+          getString+="&"+this.name+"="+this.value
+        });
 
-          // Loop over them and prevent submission
-          var validation = Array.prototype.filter.call(forms, function(form) {
-            form.addEventListener('submit', function(event) {
-              if (form.checkValidity() === false) {
-                event.preventDefault();
-                event.stopPropagation();
-              }
-              form.classList.add('was-validated');
-            }, false);
-          });
-        }, false);
-      })();
+        window.location.href=getString;
+   }
     </script>
   </body>
 </html>
