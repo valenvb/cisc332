@@ -10,33 +10,6 @@
     $username = $password = $email = $name = $address = $phone = $creditNo = $creditExp = null;
     //Checking all fields are set, except address and phone, which are optional
 
-    /*
-    if(!isset($_POST["inputUsername"])){
-        $error .= "Username not set <br>";
-    }
-    if(!isset($_POST["inputEmail"])){
-        $error .= "Email not set <br>";
-    }
-    if(!isset($_POST["inputPassword"])){
-        $error .= "Password not set <br>";
-    }
-    if(!isset($_POST["inputPassword2"])){
-        $error .= "Password 2 not set <br>";
-    }
-    if(!isset($_POST["inputFName"])){
-        $error .= "First Name not set <br>";
-    }
-    if(!isset($_POST["inputLName"])){
-        $error .= "Last Name not set <br>";
-    }
-    if(!isset($_POST["inputCreditNo"])){
-        $error .= "CreditNo not set <br>";
-    }
-    if(!isset($_POST["inputCreditExp"])){
-        $error .= "CreditExp not set <br>";
-    }
-    */
-
     if(isset($_POST["inputUsername"]) && isset($_POST["inputEmail"]) &&
         isset($_POST["inputPassword"]) && isset($_POST["inputPassword2"]) &&
         isset($_POST["inputFName"]) && isset($_POST["inputLName"]) &&
