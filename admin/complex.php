@@ -156,6 +156,35 @@ while($show = $shows->fetch()){
           </div>
           </div> <!--END show TABLE-->
 
+<hr>
+<div class="col-md-4">
+<h1 class="h4">Update Complex Info</h1>
+<form action="actions.php?action=compName" method="POST">
+    <input hidden name="cno" type="text" value="<?php echo $complexNo; ?>">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input class="form-control" type="text" name="name" value="<?php echo $complexData['Name'] ?>">
+        </div>
+        <button type=submit class="btn btn-primary">Update</button>
+    </form>
+    <form action="actions.php?action=compAddress" method="POST">
+        <input hidden name="cno" type="text" value="<?php echo $complexNo; ?>">
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input class="form-control" type="text" name="address" value="<?php echo $complexData['Address'] ?>">
+        </div>
+        <button type=submit class="btn btn-primary">Update</button>
+    </form>
+    <form action="actions.php?action=compPhone" method="POST">
+    <input hidden name="cno" type="text" value="<?php echo $complexNo; ?>">
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input class="form-control" type="text" name="phone" value="<?php echo $complexData['Phone'] ?>">
+        </div>
+        <button type=submit class="btn btn-primary">Update</button>
+    </form>
+    
+</div>
 
         </main>
       </div>

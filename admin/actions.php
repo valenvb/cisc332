@@ -147,7 +147,23 @@ if($action=="compAddress"){ //update complex address
     $cno=clean_input($_POST["cno"]);
     $addr=clean_input($_POST["address"]);
 
-    $insString = "UPDATE complex set address='".$address."' where ComplexNo=".$cno;
+    $insString = "UPDATE complex set address='".$addr."' where ComplexNo=".$cno;
+
+    $ins = $db->prepare($insString);
+
+    if($ins->execute()){
+        // print("ADDED");
+     } else {
+         print_r($ins->errorInfo());
+     }
+
+} 
+
+if($action=="compName"){ //update complex name
+    $cno=clean_input($_POST["cno"]);
+    $name=clean_input($_POST["name"]);
+
+    $insString = "UPDATE complex set name='".$name."' where ComplexNo=".$cno;
 
     $ins = $db->prepare($insString);
 
