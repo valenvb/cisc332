@@ -49,7 +49,7 @@ CREATE TABLE Showing (
 	MovieID INT NOT NULL,
 	FOREIGN KEY (ComplexNo, TheaterNo) REFERENCES Theater(ComplexNo, TheaterNo),
 	FOREIGN KEY (MovieID) REFERENCES Movie(MovieID),
-	PRIMARY KEY (STime, MovieID)
+	PRIMARY KEY (STime, SDate, TheaterNo, ComplexNo, MovieID)
 );
 CREATE TABLE Users(
 	UserID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
@@ -61,11 +61,14 @@ CREATE TABLE Users(
 CREATE TABLE Reservation(
 	UserID INT NOT NULL,
 	STime TIME NOT NULL,
+	SDate DATE NOT NULL,
+	TheaterNo INT NOT NULL,
+	ComplexNo INT NOT NULL,
 	MovieID INT NOT NULL,
 	NumTickets INT NOT NULL,
-	FOREIGN KEY (STime, MovieID) REFERENCES Showing(STime, MovieID),
+	FOREIGN KEY (STime, SDate, MovieID) REFERENCES Showing(STime, SDate, MovieID),
 	FOREIGN KEY (UserID) REFERENCES Users(UserID),
-	PRIMARY KEY (UserID, STime, MovieID)
+	PRIMARY KEY (UserID, STime, SDate, MovieID)
 );
 CREATE TABLE Member(
 	UserID INT NOT NULL,
