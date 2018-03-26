@@ -40,6 +40,26 @@ if ( $_SESSION['user_type'] != "A" ){
 
         <main id="top" role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
           
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+            <h1 class="h2">Dashboard</h1>
+          </div>
+
+        <div class="sats">
+        <?php
+          include_once '../lib/database.php';
+    $mostPopularComplex = $db->query("Select `name`, C.complexno, num from complex C, (SELECT COMPLEXNO, NUM FROM (SELECT MAX(COUNTED) AS NUM FROM (SELECT COMPLEXNO, SUM(NUMTICKETS) AS COUNTED FROM RESERVATION GROUP BY COMPLEXNO) AS TICKETSUM) AS NUMS INNER JOIN (SELECT COMPLEXNO, SUM(NUMTICKETS) AS COUNTED FROM RESERVATION GROUP BY COMPLEXNO) AS NUMSS ON NUM = COUNTED) as R where c.complexno=R.complexno;")->fetch();
+
+    $mostPopularMovie = $db->query("Select title, M.movieID, num from movie M, (SELECT MOVIEID, NUM FROM (SELECT MAX(COUNTED) AS NUM FROM (SELECT MOVIEID, SUM(NUMTICKETS) AS COUNTED FROM RESERVATION GROUP BY MOVIEID) AS TICKETSUM) AS NUMS INNER JOIN (SELECT MOVIEID, SUM(NUMTICKETS) AS COUNTED FROM RESERVATION GROUP BY MOVIEID) AS NUMSS ON NUM = COUNTED) as R where M.movieid=R.movieID;")->fetch();
+  ?>
+          <p>
+            The most popular complex is: <a href="complex.php?complexno=<?php echo $mostPopularComplex['complexno']; ?>"><?php echo $mostPopularComplex['name'];?></a>. It has sold <?php echo $mostPopularComplex['num']?> tickets.
+          </p>
+          <p>
+            The most popular movie is: <a href="../details.php?movie_id=<?php echo $mostPopularMovie['movieID']; ?>"><?php echo $mostPopularMovie['title'];?></a>. It has sold <?php echo $mostPopularMovie['num']?> tickets.
+          </p>
+        </div>
+
+
         <div id="mov_list">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
             <h1 class="h2">Movies</h1>
