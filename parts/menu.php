@@ -46,7 +46,7 @@ if (session_status() == PHP_SESSION_NONE) {
     </div>
     <div class="navbar navbar-light bg-light box-shadow">
         <div class="container d-flex justify-content-between">
-            <a href="index.php" class="navbar-brand d-flex align-items-center">
+            <a href="http://localhost:8888/omts" class="navbar-brand d-flex align-items-center">
                 <strong>OMTS</strong>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader"
