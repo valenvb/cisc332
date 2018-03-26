@@ -4,6 +4,7 @@
     }
     
     include 'parts/safety.php';
+    include 'lib/database.php';
     //initializing variables
     $error = "";
     $username = $password = $email = $name = $address = $phone = $creditNo = $creditExp = null;
@@ -44,8 +45,8 @@
         $username = clean_input($_POST["inputUsername"]);
         $dbh = new PDO('mysql:host=localhost;dbname=OMTS', "test", "test");
         //echo("username:".$username."<br>");
-        //echo($dbh->query("SELECT * FROM USERS;")-> queryString . "<br>");
-        //foreach($dbh->query("SELECT * FROM USERS;") as $row){
+        //echo($db->query("SELECT * FROM USERS;")-> queryString . "<br>");
+        //foreach($db->query("SELECT * FROM USERS;") as $row){
         //    print_r($row);
         //}
         //echo "<br>";
@@ -53,12 +54,12 @@
         //Checking for errors
 
         //Checking username is unique
-        $freeUser = $dbh->query("SELECT COUNT(*) FROM USERS WHERE Login = '$username' AND UserType = 'M'");
+        $freeUser = $db->query("SELECT COUNT(*) FROM USERS WHERE Login = '$username' AND UserType = 'M'");
         //echo(gettype($freeUser));
         //echo($freeUser == false);
         //print_r($freeUser->queryString);
         //echo($freeUser -> fetchColumn()[0]);
-        if($dbh->query("SELECT COUNT(*) FROM USERS WHERE Login = '$username' AND UserType = 'M'") -> fetchColumn()[0]){
+        if($db->query("SELECT COUNT(*) FROM USERS WHERE Login = '$username' AND UserType = 'M'") -> fetchColumn()[0]){
             $error .= "Username already in use <br>";
         }
 
@@ -87,16 +88,16 @@
             $creditExp = clean_input($_POST["inputCreditExp"]);
 //1248163264128256
             //echo("Inserting into database");
-            $checkQuery = $dbh -> query("INSERT INTO USERS (Login, Password, UserType) VALUES ('".$username."','". $password."', 'M')");
+            $checkQuery = $db -> query("INSERT INTO USERS (Login, Password, UserType) VALUES ('".$username."','". $password."', 'M')");
             //echo $checkQuery->queryString;
             //echo "<br>";
-            $userID = $dbh -> query("SELECT UserID from Users WHERE Login = '$username'") -> fetch()["UserID"];
+            $userID = $db -> query("SELECT UserID from Users WHERE Login = '$username'") -> fetch()["UserID"];
             //print_r($userID);
             //echo "<br>";
             $sql = "INSERT INTO MEMBER VALUES ($userID,'$name','$address',$phone,'$email',$creditNo,$creditExp)";
             //echo $sql;
             //echo "<br>";
-            $checkQuery = $dbh -> query($sql);
+            $checkQuery = $db -> query($sql);
             //echo $checkQuery->queryString;
             
             //logging user in
@@ -130,7 +131,6 @@
 </head>
 <body>
     <form class="form-signin" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST">
-        <img class="mb-4" src="css/bootstrap-solid.svg" alt="" width="72" height="72">
         <h1 class="h3 mb-3 font-weight-normal">New User</h1>
         <label for="inputUsername" class="sr-only">Username</label>
         <input id="inputUsername" name = "inputUsername" class="form-control" placeholder="Username" required="" autofocus="" type="text">
