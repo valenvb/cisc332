@@ -8,27 +8,49 @@ if( !isset($_SESSION['logged_in']) || (isset($_SESSION['logged_in']) && !$_SESSI
 }
 
 include 'lib/database.php';
-
+$ORDER_SUCCESS=null;
 
 if(isset($_POST["movie_id"])){
+  //print("GOT POST");
   //do da shit in da DB
   $userID = $_SESSION["user_id"];
   $movie_id=$_POST["movie_id"];
   $when=$_POST["date"];
   $where=$_POST["where"];
-  $startTime = str_replace("-", ":",$_POST["where"]);
+  $startTime = str_replace("-", ":",$_POST["showTime"]);
   $qty = $_POST["quantity"];
 
-  $remain = $db->query("SELECT Seats-`BookedSeats` as remain from showing S, complex C, theater T where S.`TheaterNo`=T.`TheaterNo` and S.`ComplexNo`=T.`ComplexNo` and S.`ComplexNo`=C.`ComplexNo` and movieid=".$movie_id." AND C.ComplexNo=".$where." AND S.SDate=".$when." AND S.STime=".$startTime)->fetchColumn()[0];
+  //print($startTime);
+
+  $remain = $db->query("SELECT Seats-`BookedSeats` as remain from showing S, complex C, theater T where S.`TheaterNo`=T.`TheaterNo` and S.`ComplexNo`=T.`ComplexNo` and S.`ComplexNo`=C.`ComplexNo` and movieid=".$movie_id." AND C.ComplexNo=".$where." AND S.SDate='".$when."' AND S.STime='".$startTime."'")->fetchColumn()[0];
 
   if($qty<$remain){
-    print("SEATS NOT AVAIABLE");
+    //print("SEATS NOT AVAIABLE");
+    $ORDER_SUCCESS=-1;
   } else {
 
-    $insertString = "INSERT INTO Reservation (UserID, STime, SDate, TheaterNo, ComplexNo, MovieID, NumTickets) VALUES (".$userID.", ".$startTime.", ".$when.", 2, ".$where.", ".$movie_id.", ".$qty.")";
+   
+    
+    $theatre = $db->query("Select T.TheaterNo from showing S, complex C, theater T where S.`TheaterNo`=T.`TheaterNo` and S.`ComplexNo`=T.`ComplexNo` and S.`ComplexNo`=C.`ComplexNo` and movieid=".$movie_id." AND C.ComplexNo=".$where." AND S.SDate='".$when."' AND S.STime='".$startTime."'")->fetchColumn()[0];
+    
+    $insertString = "INSERT INTO Reservation (UserID, STime, SDate, TheaterNo, ComplexNo, MovieID, NumTickets) VALUES (".$userID.", '".$startTime."', '".$when."', ".$theatre.", ".$where.", ".$movie_id.", ".$qty.")";
+    
+    //print($insertString);
+    if($db->query($insertString)){
+      //print("ADDED!");
 
-    if($db->query($insertString)==TRUE){
-      print("ADDED!");
+      $udQ = "UPDATE Showing Set Showing.bookedSeats= bookedseats+".$qty." where movieid=".$movie_id." AND ComplexNo=".$where." AND SDate='".$when."' AND STime='".$startTime."'";
+
+      if($db->query($udQ)){
+       // print("UPDATED!");
+        $ORDER_SUCCESS=1;
+      } else {print("UPDATE ERROR");
+        $ORDER_SUCCESS=0;
+      }
+
+    } else {
+     // print("ERR");
+      $ORDER_SUCCESS=0;
     }
 
   }
@@ -66,14 +88,8 @@ if(isset($when)){
   if($complexCount==1){
     $where = $complexes->fetch()["ComplexNo"];
   }
-
-
 }
 
-//$showsQuery = $db->query("select S.`MovieID`, S.`TheaterNo`, S.`STime`, S.`SDate`, S.`ComplexNo`, `BookedSeats`, `Name`, `Address`, `Seats` from showing S, complex C, theater T where S.`TheaterNo`=T.`TheaterNo` and S.`ComplexNo`=T.`ComplexNo` and S.`ComplexNo`=C.`ComplexNo` and movieid=".$movieID);
-
-
-//print_r($shows);
 
 ?>
 
@@ -97,6 +113,18 @@ if(isset($when)){
   </head>
 
   <body class="bg-light">
+
+<?php if(isset($ORDER_SUCCESS) && $ORDER_SUCCESS==1){?>
+  <div class="alert alert-success" role="alert">
+  Your tickets are reserved! Go <a href="index.php">home</a>?
+</div>
+<?php } ?>
+
+<?php if(isset($ORDER_SUCCESS) && $ORDER_SUCCESS==0){?>
+  <div class="alert alert-danger" role="alert">
+  Uh-oh, somthing went wrong with your order :( Please try again in a bit.
+</div>
+<?php } ?>
 
     <div class="container">
       <div class="py-5 text-center">
@@ -163,11 +191,14 @@ if(isset($when)){
               $showsQuery = $db->query("SELECT S.`MovieID`, S.`TheaterNo`, S.`STime`, S.`SDate`,  `BookedSeats`, `Seats` from showing S, complex C, theater T where S.`TheaterNo`=T.`TheaterNo` and S.`ComplexNo`=T.`ComplexNo` and S.`ComplexNo`=C.`ComplexNo` and BookedSeats<Seats and movieid=".$movieID." AND C.ComplexNo=".$where);
 
               //print($showsQuery->queryString);
-
+?>
+              <select name="showTime" onchange="formProgress();" class="form-control" id="complex-select">
+                <?php
               while($show = $showsQuery->fetch()){
-                echo " <label class=\"btn btn-secondary active\">
-                <input type=\"radio\" name=\"showTime\" value=\"".str_replace(":", "-", $show['STime'])."\" id=\"".$show['STime']."\"> ".$show['STime']."</label> ";
+                echo " 
+                <option value=\"".str_replace(":", "-", $show['STime'])."\">".$show['STime']."</option>";
               } ?>
+              </select>
             </div>
 
 
@@ -177,6 +208,11 @@ if(isset($when)){
           <h4 class="mb-3">How Many Tickets?</h4>
           <div class="row">
             <div class="col-md-6">
+            <?php if(isset($ORDER_SUCCESS) && $ORDER_SUCCESS==-1){?>
+            <div class="alert alert-warning" role="alert">
+               Sorry, we don't have that many tickets availabel at the moment.
+            </div>
+            <?php } ?>
           <input class="form-control" min=0 id="quantity" name="quantity" type="number"></input>
           </div>
           </div>
