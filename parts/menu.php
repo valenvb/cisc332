@@ -28,10 +28,10 @@ if (session_status() == PHP_SESSION_NONE) {
                         if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"]){
                             ?>
                             <li>
-                            <a href='../member/profile.php' class='text-dark'>Profile</a>
+                            <a href='member/profile.php' class='text-dark'>Profile</a>
                             <li>
                             <li>
-                            <a href='../login.php?logout=0' class='text-dark'>Log out</a>
+                            <a href='login.php?logout=0' class='text-dark'>Log out</a>
                             <li>
                             <?php
                         }

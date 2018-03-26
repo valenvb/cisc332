@@ -43,7 +43,7 @@
         isset($_POST["inputCreditNo"]) && isset($_POST["inputCreditExp"])){
 
         $username = clean_input($_POST["inputUsername"]);
-        $dbh = new PDO('mysql:host=localhost;dbname=OMTS', "test", "test");
+        $db = new PDO('mysql:host=localhost;dbname=OMTS', "test", "test");
         //echo("username:".$username."<br>");
         //echo($db->query("SELECT * FROM USERS;")-> queryString . "<br>");
         //foreach($db->query("SELECT * FROM USERS;") as $row){
@@ -88,10 +88,10 @@
             $creditExp = clean_input($_POST["inputCreditExp"]);
 //1248163264128256
             //echo("Inserting into database");
-            $checkQuery = $db -> query("INSERT INTO USERS (Login, Password, UserType) VALUES ('".$username."','". $password."', 'M')");
+            $db -> query("INSERT INTO USERS (Login, Password, UserType) VALUES ('$username','$password', 'M')");
             //echo $checkQuery->queryString;
             //echo "<br>";
-            $userID = $db -> query("SELECT UserID from Users WHERE Login = '$username'") -> fetch()["UserID"];
+            $userID = $db->query("SELECT UserID from Users WHERE Login ='$username'")->fetch()["UserID"];
             //print_r($userID);
             //echo "<br>";
             $sql = "INSERT INTO MEMBER VALUES ($userID,'$name','$address',$phone,'$email',$creditNo,$creditExp)";
