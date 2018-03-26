@@ -1,6 +1,6 @@
 <?php
  
- $db = new PDO('mysql:host=localhost;dbname=OMTS', "root", "root");
+ $db = new PDO('mysql:host=localhost;dbname=OMTS', "test", "test");
  
  //$res = $db->query('SELECT * from Movie');
  //while($row = $res->fetch()){
