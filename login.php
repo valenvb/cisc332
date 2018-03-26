@@ -19,7 +19,7 @@
 
       //echo("<a>In login check</a><br>");
       //Connecting to database
-      $dbh = new PDO('mysql:host=localhost;dbname=OMTS', "root", "");
+      $dbh = new PDO('mysql:host=localhost;dbname=OMTS', "test", "test");
       //foreach($dbh->query("SELECT * FROM USERS;") as $test_row){
       //   print_r($test_row);
       //}

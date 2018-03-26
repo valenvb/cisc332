@@ -149,7 +149,7 @@ CREATE TABLE `Reservation` (
   `NumTickets` int(11) NOT NULL,
   PRIMARY KEY (`UserID`,`STime`,`SDate`,`MovieID`),
   KEY `STime` (`STime`,`SDate`,`TheaterNo`,`ComplexNo`,`MovieID`),
-  CONSTRAINT `reservation_ibfk_1` FOREIGN KEY (`STime`, `SDate`, `TheaterNo`, `ComplexNo`, `MovieID`) REFERENCES `Showing` (`STime`, `SDate`, `TheaterNo`, `ComplexNo`, `MovieID`),
+  CONSTRAINT `reservation_ibfk_1` FOREIGN KEY (`STime`, `SDate`, `TheaterNo`, `ComplexNo`, `MovieID`) REFERENCES `Showing` (`STime`, `SDate`, `TheaterNo`, `ComplexNo`, `MovieID`) on delete cascade,
   CONSTRAINT `reservation_ibfk_2` FOREIGN KEY (`UserID`) REFERENCES `Users` (`UserID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
