@@ -5,14 +5,14 @@
     $past = $_SERVER["HTTP_REFERER"];
     //checking for logout
     if(isset($_GET["logout"]) && $_GET["logout"]=="0"){
-      echo "Logged out";
+      //echo "Logged out";
       $_SESSION["logged_in"] = false;
       session_destroy();
       header("Location:$past"); 
     }
     //check if already logged in
     if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"] ){
-      echo"<a>you are already logged in</a>";
+      //echo"<a>you are already logged in</a>";
       header("Location:$past");
     //check if user is trying to log in
     } elseif(isset($_POST["username"]) && isset($_POST["password"])){
@@ -91,7 +91,6 @@
     <link href="css/signin.css" rel="stylesheet">
   </head>
   <body>
-    <?php include 'parts/menu.php'; ?>
 
     <main role="main">
       <div class="">
