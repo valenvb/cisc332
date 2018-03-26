@@ -1,3 +1,9 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+?>
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -28,7 +34,7 @@
           <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don't simply skip over it entirely.</p>
           <p>
             <a href="#" class="btn btn-primary my-2">Reserve Tickets</a>
-            <a href="#" class="btn btn-secondary my-2">Watch the trailer</a>
+            <a href="#" class="btn btn-secondary my-2">Details</a>
           </p>
         </div>
       </section>
